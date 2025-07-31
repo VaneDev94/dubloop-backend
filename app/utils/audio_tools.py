@@ -77,15 +77,16 @@ def clone_voice(audio_bytes: bytes) -> str:
 
     return voice_id
 
-from elevenlabs import generate, set_api_key
-
-set_api_key(os.getenv("ELEVEN_API_KEY"))
+from elevenlabs.client import ElevenLabs
 
 def synthesize_audio(text: str, lang: str, voice_id: str) -> bytes:
     """
     Genera audio real desde texto usando ElevenLabs y la voz clonada o seleccionada.
     """
-    audio = generate(
+    api_key = os.getenv("ELEVEN_API_KEY")
+    client = ElevenLabs(api_key=api_key)
+
+    audio = client.generate(
         text=text,
         voice=voice_id,
         model="eleven_multilingual_v2"
