@@ -1,14 +1,8 @@
-
-
-"""
-Este módulo contiene todos los modelos de datos usados en el proyecto Dubloop.
-"""
-
-from .job import Job
-from .user import User
-from .voice import VoiceProfile
-from .metrics import JobMetrics
-from .subtitle import Subtitle
+from app.models.job import Job
+from app.models.user import User
+from app.models.voice import VoiceProfile
+from app.models.metrics import JobMetrics
+from app.models.subtitle import Subtitle
 
 __all__ = [
     "Job",
