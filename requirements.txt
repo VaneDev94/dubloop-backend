@@ -1,0 +1,26 @@
+# FastAPI
+fastapi
+uvicorn
+python-multipart
+aiofiles
+
+# Audio y vídeo
+ffmpeg-python
+moviepy
+pydub
+librosa
+soundfile
+scipy
+numpy
+
+# IA y procesamiento
+openai
+torch
+transformers
+torchaudio
+
+# Clonación de voz externa
+elevenlabs
+
+# Config
+python-dotenv
