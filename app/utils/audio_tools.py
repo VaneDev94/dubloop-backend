@@ -86,7 +86,7 @@ def synthesize_audio(text: str, lang: str, voice_id: str) -> bytes:
     api_key = os.getenv("ELEVEN_API_KEY")
     client = ElevenLabs(api_key=api_key)
 
-    audio = client.generate(
+    audio = client.text_to_speech.generate(
         text=text,
         voice=voice_id,
         model="eleven_multilingual_v2"

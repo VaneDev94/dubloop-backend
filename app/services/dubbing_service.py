@@ -5,9 +5,9 @@ from app.utils.audio_tools import (
     clone_voice,
     synthesize_audio,
     enhance_audio,
-    merge_audio_with_video,
-    generate_subtitles
+    merge_audio_with_video
 )
+from app.models.subtitle import generate_subtitles
 import time
 
 import os
