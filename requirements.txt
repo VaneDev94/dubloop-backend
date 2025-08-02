@@ -36,3 +36,6 @@ httpx
 
 # Sistema de pagos
 stripe
+
+# Rate limiting
+slowapi
