@@ -24,3 +24,15 @@ elevenlabs
 
 # Config
 python-dotenv
+
+# Base de datos y autenticación
+sqlalchemy
+psycopg2-binary
+passlib[bcrypt]
+python-jose[cryptography]
+
+# Cliente HTTP
+httpx
+
+# Sistema de pagos
+stripe

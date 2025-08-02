@@ -139,3 +139,23 @@ def merge_audio_with_video(video_bytes: bytes, audio_bytes: bytes) -> bytes:
 
         output_tmp.seek(0)
         return output_tmp.read()
+
+def validate_custom_audio(audio_bytes: bytes, allowed_formats=("wav", "mp3", "m4a", "aac")) -> bool:
+    """
+    Verifica que el archivo de audio subido tenga un formato válido.
+    """
+    try:
+        audio = AudioSegment.from_file(BytesIO(audio_bytes))
+        return audio.format.lower() in allowed_formats
+    except Exception:
+        return False
+
+def prepare_audio_for_cloning(audio_bytes: bytes) -> bytes:
+    """
+    Convierte el audio personalizado a .wav mono 16kHz listo para clonación.
+    """
+    audio = AudioSegment.from_file(BytesIO(audio_bytes))
+    audio = audio.set_channels(1).set_frame_rate(16000)
+    output = BytesIO()
+    audio.export(output, format="wav")
+    return output.getvalue()

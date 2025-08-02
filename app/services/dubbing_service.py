@@ -17,9 +17,26 @@ from dotenv import load_dotenv
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
+from app.services.credits import calculate_credits
+from app.models.user import User
+from sqlalchemy.orm import Session
+
+def discount_user_credits(user: User, db: Session, lip_sync: bool, subtitles: bool, enhancement: bool):
+    cost = calculate_credits(
+        enable_lip_sync=lip_sync,
+        enable_subtitles=subtitles,
+        enable_audio_enhancement=enhancement
+    )
+    user.credits -= cost
+    db.commit()
+
 async def process_dubbing(
     file,
     target_lang,
+    user: User,
+    db: Session,
+    voice_source="auto",  # auto | custom
+    custom_voice=None,  # UploadFile
     enable_lip_sync=False,
     enable_subtitles=False,
     enable_audio_enhancement=True
@@ -48,9 +65,13 @@ async def process_dubbing(
     metrics["translation_time"] = f"{time.perf_counter() - t3:.2f}s"
     metrics["total_tokens"] = len(translated_text.split())
 
-    # 4. Clonación de voz
+    # 4. Clonación de voz (personalizada o automática)
     t4 = time.perf_counter()
-    voice_id = clone_voice(audio_wav)
+    if voice_source == "custom" and custom_voice:
+        custom_audio_bytes = await custom_voice.read()
+        voice_id = clone_voice(custom_audio_bytes)
+    else:
+        voice_id = clone_voice(audio_wav)
     metrics["voice_cloning_time"] = f"{time.perf_counter() - t4:.2f}s"
 
     # 5. Síntesis
@@ -74,6 +95,7 @@ async def process_dubbing(
     # Progreso simulado
     metrics["progress"] = "100%"
 
+    discount_user_credits(user, db, enable_lip_sync, enable_subtitles, enable_audio_enhancement)
     return {
         "video": video_final,
         "metrics": metrics,
