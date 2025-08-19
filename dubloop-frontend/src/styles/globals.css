@@ -1,0 +1,37 @@
+@import url("https://fonts.googleapis.com/css2?family=Satoshi:wght@400;500;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-accent: #2ECC9A;
+  --color-accent-hover: #33FFB5;
+}
+
+/* Fuente personalizada */
+body {
+  font-family: "Satoshi", sans-serif;
+}
+
+/* Glow verde */
+.glow-green {
+  box-shadow: 0 0 30px rgba(16, 185, 129, 0.6);
+}
+
+/* Animación para bordes brillantes */
+@keyframes pulse-glow {
+  0% {
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(16, 185, 129, 0.7);
+  }
+  100% {
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+  }
+}
+
+.glow-animated {
+  animation: pulse-glow 2s infinite;
+}

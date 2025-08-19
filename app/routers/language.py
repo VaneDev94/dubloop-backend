@@ -1,5 +1,5 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException
-from app.services.language_detection import detect_language
+from app.services.language_detection import detect_language_from_audio as detect_language
 
 router = APIRouter(prefix="/language", tags=["Language Detection"])
 

@@ -7,18 +7,20 @@ load_dotenv()
 
 stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 
-# Define some basic pricing (amount in euros -> credits)
-PRICE_CREDIT_MAPPING = {
-    500: 50,    # 5€ = 50 credits
-    1000: 120,  # 10€ = 120 credits
-    2000: 260   # 20€ = 260 credits
+PLAN_PRICE_MAPPING = {
+    "free": 0,
+    "creator": 2900,  # 29€ in cents
+    "premium": 3900   # 39€ in cents
 }
 
 DOMAIN = os.getenv("FRONTEND_DOMAIN", "http://localhost:3000")
 
-def create_checkout_session(user_id: int, amount: int):
-    if amount not in PRICE_CREDIT_MAPPING:
-        raise HTTPException(status_code=400, detail="Invalid amount selected")
+def create_checkout_session(user_id: int, plan: str):
+    if plan not in PLAN_PRICE_MAPPING:
+        raise HTTPException(status_code=400, detail="Invalid plan selected")
+
+    if plan == "free":
+        return "Free plan activated"
 
     try:
         session = stripe.checkout.Session.create(
@@ -27,15 +29,15 @@ def create_checkout_session(user_id: int, amount: int):
                 {
                     "price_data": {
                         "currency": "eur",
-                        "unit_amount": amount,
+                        "unit_amount": PLAN_PRICE_MAPPING[plan],
                         "product_data": {
-                            "name": f"{PRICE_CREDIT_MAPPING[amount]} Dubloop Credits"
+                            "name": f"Dubloop {plan.capitalize()} Plan"
                         },
                     },
                     "quantity": 1,
                 }
             ],
-            mode="payment",
+            mode="subscription",
             metadata={"user_id": str(user_id)},
             success_url=f"{DOMAIN}/success?session_id={{CHECKOUT_SESSION_ID}}",
             cancel_url=f"{DOMAIN}/cancel",

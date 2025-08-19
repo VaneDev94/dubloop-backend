@@ -1,0 +1,14 @@
+{
+  "name": "dubloop",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "frontend": "cd dubloop-frontend && npm run dev",
+    "backend": "cd dubloop-backend && ../venv/bin/python -m uvicorn main:app --reload --port 8000",
+    "dubloop": "concurrently \"npm run backend\" \"npm run frontend\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.0",
+    "gh-pages": "^6.3.0"
+  }
+}

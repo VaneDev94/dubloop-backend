@@ -7,8 +7,7 @@ def create_user(db: Session, user_data: UserCreate) -> User:
     hashed_password = get_password_hash(user_data.password)
     db_user = User(
         email=user_data.email,
-        hashed_password=hashed_password,
-        credits=0  # Nuevo usuario empieza con 0 tokens/créditos
+        hashed_password=hashed_password
     )
     db.add(db_user)
     db.commit()
@@ -18,12 +17,6 @@ def create_user(db: Session, user_data: UserCreate) -> User:
 def get_user_by_email(db: Session, email: str) -> User:
     return db.query(User).filter(User.email == email).first()
 
-def update_credits(db: Session, user_id: int, amount: int) -> None:
-    user = db.query(User).filter(User.id == user_id).first()
-    if user:
-        user.credits += amount
-        db.commit()
-
 def get_user_by_id(db: Session, user_id: int) -> User:
     return db.query(User).filter(User.id == user_id).first()
 
@@ -31,7 +24,7 @@ def set_user_google_account(db: Session, email: str) -> User:
     user = get_user_by_email(db, email)
     if not user:
         # Si el usuario no existe, lo creamos sin contraseña
-        user = User(email=email, hashed_password=None, credits=0)
+        user = User(email=email, hashed_password=None)
         db.add(user)
         db.commit()
         db.refresh(user)

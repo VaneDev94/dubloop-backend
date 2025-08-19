@@ -17,18 +17,9 @@ from dotenv import load_dotenv
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-from app.services.credits import calculate_credits
 from app.models.user import User
 from sqlalchemy.orm import Session
 
-def discount_user_credits(user: User, db: Session, lip_sync: bool, subtitles: bool, enhancement: bool):
-    cost = calculate_credits(
-        enable_lip_sync=lip_sync,
-        enable_subtitles=subtitles,
-        enable_audio_enhancement=enhancement
-    )
-    user.credits -= cost
-    db.commit()
 
 async def process_dubbing(
     file,
@@ -95,27 +86,8 @@ async def process_dubbing(
     # Progreso simulado
     metrics["progress"] = "100%"
 
-    discount_user_credits(user, db, enable_lip_sync, enable_subtitles, enable_audio_enhancement)
     return {
         "video": video_final,
         "metrics": metrics,
         "subtitles": subtitles
     }
-
-
-# Estimación de créditos según las opciones seleccionadas
-from app.services.credits import calculate_credits
-
-def estimate_cost(
-    enable_lip_sync=False,
-    enable_subtitles=False,
-    enable_audio_enhancement=True
-) -> int:
-    """
-    Estima los créditos necesarios según las funciones opcionales seleccionadas.
-    """
-    return calculate_credits(
-        enable_lip_sync=enable_lip_sync,
-        enable_subtitles=enable_subtitles,
-        enable_audio_enhancement=enable_audio_enhancement
-    )

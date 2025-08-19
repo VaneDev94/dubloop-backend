@@ -41,7 +41,7 @@ def authenticate_user(db: Session, email: str, password: str):
  # Registra un nuevo usuario en la base de datos con su contraseña hasheada
 def register_user(db: Session, email: str, password: str) -> User:
     hashed_password = get_password_hash(password)
-    new_user = User(email=email, hashed_password=hashed_password, credits=0)
+    new_user = User(email=email, hashed_password=hashed_password)
     db.add(new_user)
     db.commit()
     db.refresh(new_user)

@@ -12,14 +12,10 @@ class UserLogin(UserBase):
 
 class UserResponse(UserBase):
     id: int
-    credits: int
     is_verified: bool
 
     class Config:
         from_attributes = True
-
-class UserUpdate(BaseModel):
-    credits: Optional[int] = None
 
 
 # Token schemas

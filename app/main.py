@@ -1,20 +1,21 @@
 from app.database import engine
-from app.models import user, credits
+from app.models import subscription, user
 
 user.Base.metadata.create_all(bind=engine)
-credits.Base.metadata.create_all(bind=engine)
+subscription.Base.metadata.create_all(bind=engine)
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 from fastapi import Request
-from app.api.endpoints.dubbing import router as dubbing_router
-from app.routers.gateway import router as gateway_router
+from app.routers.dubbing import router as dubbing_router
 from app.routers.stripe import router as stripe_router
-from app.routers import payments
+from app.routers import payments, subscription
 from app.routers import webhook
 from app.routers import health
+# Routers faltantes
+from app.routers import auth, billing, detection, users
 
 app = FastAPI(title="Dubloop Backend")
 
@@ -34,7 +35,6 @@ app.add_middleware(
 
 # Incluir rutas
 app.include_router(dubbing_router, prefix="/dubbing", tags=["Dubbing"])
-app.include_router(gateway_router)
 app.include_router(stripe_router, prefix="/stripe", tags=["Stripe"])
 app.include_router(payments.router)
 app.include_router(webhook.router)
@@ -43,3 +43,15 @@ app.include_router(auth_google.router)
 app.include_router(health.router)
 from app.routers.language import router as language_router
 app.include_router(language_router, prefix="/language", tags=["Language Detection"])
+
+# Routers añadidos
+app.include_router(auth.router, prefix="/auth", tags=["Auth"])
+app.include_router(billing.router, prefix="/billing", tags=["Billing"])
+app.include_router(subscription.router, prefix="/subscriptions", tags=["Subscriptions"])
+app.include_router(detection.router, prefix="/detection", tags=["Detection"])
+app.include_router(users.router, prefix="/users", tags=["Users"])
+
+
+@app.get("/ping")
+def ping():
+    return {"message": "pong"}

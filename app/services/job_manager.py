@@ -1,8 +1,6 @@
 import time
 from datetime import datetime, timedelta
 from app.services.dubbing_service import process_dubbing
-from app.services.credits import check_and_consume_credits
-from app.services.credits import estimate_credits
 
 # Diccionario para almacenar los jobs en memoria
 jobs = {}
@@ -14,7 +12,6 @@ def create_job(job_id):
         "metrics": {},
         "video": None,
         "error": None,
-        "estimated_credits": None,
         "subtitles": None,
         "created_at": datetime.utcnow()
     }
@@ -29,11 +26,6 @@ async def run_dubbing_job(
     enable_audio_enhancement
 ):
     try:
-        estimated_credits = estimate_credits(file_bytes, enable_lip_sync, enable_subtitles, enable_audio_enhancement)
-        if not check_and_consume_credits(user_id, estimated_credits):
-            raise Exception("Créditos insuficientes")
-        jobs[job_id]["estimated_credits"] = estimated_credits
-
         result = await process_dubbing(
             file=DummyUploadFile(file_bytes),
             target_lang=target_lang,
@@ -96,16 +88,6 @@ def clean_old_jobs():
     ]
     for job_id in expired_keys:
         del jobs[job_id]
-
-def estimate_credits(file_bytes, enable_lip_sync, enable_subtitles, enable_audio_enhancement):
-    base_cost = len(file_bytes) / (1024 * 1024)  # 1 crédito por MB
-    if enable_lip_sync:
-        base_cost += 2
-    if enable_subtitles:
-        base_cost += 1
-    if enable_audio_enhancement:
-        base_cost += 1
-    return int(base_cost)
 
 # Clase auxiliar para simular un UploadFile desde bytes
 class DummyUploadFile:
