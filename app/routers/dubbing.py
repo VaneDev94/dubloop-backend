@@ -122,8 +122,7 @@ async def get_dubbing_result(job_id: str):
         return {
             "status": "processing",
             "progress": job["progress"],
-            "message": "Tu vídeo sigue procesándose. Puedes consultar este mismo enlace más tarde.",
-            "estimated_credits": job.get("credits_used")
+            "message": "Tu vídeo sigue procesándose. Puedes consultar este mismo enlace más tarde."
         }
 
     if job["status"] == "error":
