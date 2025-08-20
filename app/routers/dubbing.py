@@ -81,17 +81,20 @@ async def dub_video(
 @router.post("/start-dubbing/")
 async def start_dubbing(
     file: UploadFile = File(...),
-    target_lang: str = Form(...),
-    voice_cloning: bool = Form(True),
-    enable_lip_sync: bool = Form(False),
-    enable_subtitles: bool = Form(False),
-    enable_audio_enhancement: bool = Form(True)
+    target_language: str = Form(..., alias="target_lang"),
+    voice_cloning: str = Form("false"),
+    enable_lip_sync: str = Form("false"),
+    enable_subtitles: str = Form("false"),
+    enable_audio_enhancement: str = Form("true")
 ):
     validate_upload_file(file)
     contents = await file.read()
     if not contents:
         raise HTTPException(status_code=400, detail="El archivo está vacío.")
     file.file.seek(0)
+
+    def to_bool(value: str) -> bool:
+        return value.lower() in ["true", "1", "yes", "sí"]
 
     job_id = str(uuid.uuid4())
     file_bytes = contents
@@ -102,10 +105,10 @@ async def start_dubbing(
         job_manager.run_dubbing_job(
             job_id=job_id,
             file_bytes=file_bytes,
-            target_lang=target_lang,
-            enable_lip_sync=enable_lip_sync,
-            enable_subtitles=enable_subtitles,
-            enable_audio_enhancement=enable_audio_enhancement
+            target_lang=target_language,
+            enable_lip_sync=to_bool(enable_lip_sync),
+            enable_subtitles=to_bool(enable_subtitles),
+            enable_audio_enhancement=to_bool(enable_audio_enhancement)
         )
     )
 
@@ -114,8 +117,8 @@ async def start_dubbing(
         "message": "Vídeo recibido correctamente",
         "filename": file.filename,
         "size_bytes": len(contents),
-        "target_language": target_lang,
-        "voice_cloning": voice_cloning
+        "target_language": target_language,
+        "voice_cloning": to_bool(voice_cloning)
     })
 
 
