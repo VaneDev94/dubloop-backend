@@ -61,7 +61,7 @@ export default function Login() {
 
   const handleGoogleLogin = () => {
     const googleWindow = window.open(
-      `${import.meta.env.VITE_API_URL}/auth/google`,
+      `${import.meta.env.VITE_API_URL}/auth/google/login`,
       "_blank",
       "width=500,height=600"
     );
