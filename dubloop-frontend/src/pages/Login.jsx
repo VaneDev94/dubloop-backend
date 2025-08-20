@@ -59,6 +59,33 @@ export default function Login() {
     }
   };
 
+  const handleGoogleLogin = () => {
+    const googleWindow = window.open(
+      `${import.meta.env.VITE_API_URL}/auth/google`,
+      "_blank",
+      "width=500,height=600"
+    );
+
+    const timer = setInterval(() => {
+      if (googleWindow.closed) {
+        clearInterval(timer);
+        const token = localStorage.getItem("token");
+        if (token) {
+          navigate("/profile");
+        }
+      }
+    }, 1000);
+
+    window.addEventListener("message", (event) => {
+      if (event.origin !== import.meta.env.VITE_API_URL) return;
+      const { token } = event.data;
+      if (token) {
+        localStorage.setItem("token", token);
+        navigate("/profile");
+      }
+    });
+  };
+
   return (
     <div
       className="flex min-h-screen bg-cover bg-center text-white"
@@ -146,7 +173,7 @@ export default function Login() {
             <button
               type="button"
               className="w-full flex items-center justify-center gap-3 py-3 rounded-md bg-white text-black font-medium hover:bg-gray-200 transition"
-              onClick={() => window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`}
+              onClick={handleGoogleLogin}
             >
               <svg className="w-6 h-6" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
                 <g>
