@@ -10,7 +10,6 @@ moviepy
 pydub
 librosa
 soundfile
-scipy
 numpy
 
 # IA y procesamiento
