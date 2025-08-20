@@ -70,9 +70,14 @@ def ping():
 
 
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, RedirectResponse
 import os
 
 frontend_path = os.path.join(os.path.dirname(__file__), "frontend")
+
+
+@app.get("/iniciar-sesion")
+async def iniciar_sesion():
+    return RedirectResponse(url="/auth/google/login")
 
 app.mount("/", StaticFiles(directory=frontend_path, html=True), name="frontend")
