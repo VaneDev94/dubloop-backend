@@ -41,3 +41,7 @@ slowapi
 
 email_validator==2.2.0
 git+https://github.com/openai/whisper.git
+
+pandas
+requests
+typing-extensions
