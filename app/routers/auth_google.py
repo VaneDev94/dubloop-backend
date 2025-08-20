@@ -15,6 +15,6 @@ async def auth_google_callback(request: Request):
     token = await oauth.google.authorize_access_token(request)
     user_info = await oauth.google.parse_id_token(request, token)
     user = await get_or_create_google_user(user_info)
-    response = RedirectResponse(url="/")
+    response = RedirectResponse(url="https://f465e9e21402.ngrok-free.app")
     # Aquí puedes usar cookies, JWT, etc.
     return response

@@ -1,5 +1,6 @@
 # app/router/auth.py
 
+import os
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
@@ -18,7 +19,8 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Email already registered")
     
     token = generate_email_verification_token(user.email)
-    print(f"Verifica tu email haciendo clic aquí: http://localhost:8000/verify-email/{token}")
+    base_url = os.getenv("FRONTEND_URL", "http://localhost:5173")
+    print(f"Verifica tu email haciendo clic aquí: {base_url}/verify-email/{token}")
     
     return register_user(user, db)
 
