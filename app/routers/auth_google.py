@@ -18,16 +18,43 @@ async def auth_google_callback(request: Request):
     user = await get_or_create_google_user(user_info)
     id_token = escape(token.get("id_token", ""))
     return HTMLResponse(content=f"""
-<html>
-  <body>
-    <script>
-      window.opener.postMessage({{
-        type: "google-auth-success",
-        token: "{id_token}"
-      }}, "*");
-      window.close();
-    </script>
-    <p>Autenticación completada. Puedes cerrar esta ventana.</p>
-  </body>
-</html>
+  <html>
+    <head>
+      <title>Autenticación completada</title>
+      <style>
+        body {{
+          font-family: Arial, sans-serif;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          height: 100vh;
+          background-color: #d2f4ea;
+          color: #333;
+        }}
+        .container {{
+          text-align: center;
+          background: white;
+          padding: 30px;
+          border-radius: 12px;
+          box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }}
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <h2>✅ Autenticación completada</h2>
+        <p>Redirigiendo...</p>
+      </div>
+      <script>
+        const token = "{id_token}";
+        window.addEventListener("load", () => {{
+          window.opener?.postMessage({{
+            type: "google-auth-success",
+            token
+          }}, "*");
+          setTimeout(() => window.close(), 1500);
+        }});
+      </script>
+    </body>
+  </html>
 """)
