@@ -1,3 +1,6 @@
+from dotenv import load_dotenv
+load_dotenv()
+import os
 from app.database import engine
 from app.models import user
 from app.models.plans import Subscription
@@ -15,10 +18,18 @@ from app.routers.stripe import router as stripe_router
 from app.routers import payments, subscription
 from app.routers import webhook
 from app.routers import health
+from starlette.middleware.sessions import SessionMiddleware
 # Routers faltantes
 from app.routers import auth, billing, detection, users
 
 app = FastAPI(title="Dubloop Backend")
+
+SESSION_SECRET = os.getenv("SESSION_SECRET", "fallback-secret")
+
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=SESSION_SECRET,
+)
 
 # Add rate limiting
 limiter = Limiter(key_func=get_remote_address, default_limits=["5/minute"])

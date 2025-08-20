@@ -45,3 +45,4 @@ git+https://github.com/openai/whisper.git
 pandas
 requests
 typing-extensions
+itsdangerous>=2.0
