@@ -73,7 +73,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, RedirectResponse
 import os
 
-frontend_path = os.path.join(os.path.dirname(__file__), "frontend")
+frontend_path = os.path.join(os.path.dirname(__file__), "../dubloop-frontend/dist")
 
 
 @app.get("/iniciar-sesion")
@@ -81,3 +81,10 @@ async def iniciar_sesion():
     return RedirectResponse(url="/auth/google/login")
 
 app.mount("/", StaticFiles(directory=frontend_path, html=True), name="frontend")
+
+
+# Catch-all route to serve index.html for frontend routes (SPA)
+@app.get("/{full_path:path}")
+async def serve_frontend(full_path: str):
+    index_path = os.path.join(frontend_path, "index.html")
+    return FileResponse(index_path)
