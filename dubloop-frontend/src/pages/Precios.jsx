@@ -1,6 +1,8 @@
 import React from "react";
 import { motion } from "framer-motion";
 import axios from "axios";
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+import { BASE_URL } from "../config";
 
 export default function Precios() {
   const planes = [
@@ -106,7 +108,7 @@ export default function Precios() {
 
   const handleSubscribe = async (plan) => {
     try {
-      const res = await axios.post("http://localhost:8000/subscriptions/create", {
+      const res = await axios.post(`${API_BASE_URL}/subscriptions/create`, {
         plan: plan,
       });
       alert(`Suscripción creada con el plan: ${plan}`);

@@ -4,5 +4,10 @@ import react from '@vitejs/plugin-react'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: "/dubloop-backend/",
+  base: "/",
+  server: {
+    host: true,
+    port: 5173,
+    allowedHosts: ['f465e9e21402.ngrok-free.app'],
+  },
 })

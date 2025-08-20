@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import bg2 from "../assets/bg1.png";
 import axios from "axios";
+import { API } from "../api"; // o el path correcto si ya tienes un wrapper configurado
 
 const TraducirVideo = () => {
   const [lipSync, setLipSync] = useState(null);
@@ -26,7 +27,7 @@ const TraducirVideo = () => {
       formData.append("outputLang", outputLang || "");
       formData.append("cloneVoice", cloneVoice || "");
 
-      const response = await axios.post("http://localhost:8000/dubbing/start-dubbing/", formData, {
+      const response = await API.post(`/dubbing/start-dubbing/`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       console.log("Respuesta del backend:", response.data);
@@ -43,7 +44,7 @@ const TraducirVideo = () => {
 
     const interval = setInterval(async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/dubbing/result/${jobId}`);
+        const response = await API.get(`/dubbing/result/${jobId}`);
         if (response.data.status === "completed") {
           setResultUrl(response.data.result_url);
           setStatus("Completado ✅");
@@ -268,7 +269,7 @@ const TraducirVideo = () => {
                 className="w-full max-w-2xl rounded-lg border border-[#2ECC9A] shadow-lg"
               />
               <a
-                href={`http://localhost:8000/dubbing/download/${jobId}`}
+                href={`${import.meta.env.VITE_API_URL}/dubbing/download/${jobId}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-center text-[#33FFB5] underline"
@@ -276,7 +277,7 @@ const TraducirVideo = () => {
                 Descargar video procesado
               </a>
               <a
-                href={`http://localhost:8000/dubbing/subtitles/${jobId}`}
+                href={`${import.meta.env.VITE_API_URL}/dubbing/subtitles/${jobId}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-center text-[#33FFB5] underline"

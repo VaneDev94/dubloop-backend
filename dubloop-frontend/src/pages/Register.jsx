@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import.meta.env.VITE_API_URL;
 import { useNavigate, Link } from 'react-router-dom';
 import bg2 from '../assets/bg2.png';
 
@@ -18,7 +19,7 @@ const Register = () => {
       return;
     }
     try {
-      const response = await axios.post('http://localhost:8000/auth/register', {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/register`, {
         email,
         password,
       });

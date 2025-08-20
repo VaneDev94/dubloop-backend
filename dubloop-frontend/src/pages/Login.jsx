@@ -45,7 +45,7 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/auth/login`, {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/login`, {
         email,
         password,
       });
@@ -146,7 +146,7 @@ export default function Login() {
             <button
               type="button"
               className="w-full flex items-center justify-center gap-3 py-3 rounded-md bg-white text-black font-medium hover:bg-gray-200 transition"
-              onClick={() => window.location.href = `${process.env.REACT_APP_API_URL}/auth/google`}
+              onClick={() => window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`}
             >
               <svg className="w-6 h-6" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
                 <g>
