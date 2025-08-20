@@ -19,13 +19,14 @@ const TraducirVideo = () => {
   const handleSubmit = async () => {
     try {
       setStatus("Procesando...");
+      // NUEVO FormData según instrucciones:
       const formData = new FormData();
-      if (videoFile) formData.append("file", videoFile);
-      formData.append("lipSync", lipSync || "");
-      formData.append("addSubtitles", addSubtitles || "");
-      formData.append("improveAudio", improveAudio || "");
-      formData.append("outputLang", outputLang || "");
-      formData.append("cloneVoice", cloneVoice || "");
+      formData.append("file", videoFile); // backend espera "file"
+      formData.append("target_lang", "es"); // backend espera "target_lang"
+      formData.append("voice_cloning", true); // backend espera "voice_cloning"
+      formData.append("enable_lip_sync", false); // backend espera "enable_lip_sync"
+      formData.append("enable_subtitles", false); // backend espera "enable_subtitles"
+      formData.append("enable_audio_enhancement", true); // backend espera "enable_audio_enhancement"
 
       const response = await API.post(`/dubbing/start-dubbing/`, formData, {
         headers: { "Content-Type": "multipart/form-data" },

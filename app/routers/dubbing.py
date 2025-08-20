@@ -82,6 +82,7 @@ async def dub_video(
 async def start_dubbing(
     file: UploadFile = File(...),
     target_lang: str = Form(...),
+    voice_cloning: bool = Form(True),
     enable_lip_sync: bool = Form(False),
     enable_subtitles: bool = Form(False),
     enable_audio_enhancement: bool = Form(True)
@@ -93,7 +94,7 @@ async def start_dubbing(
     file.file.seek(0)
 
     job_id = str(uuid.uuid4())
-    file_bytes = await file.read()
+    file_bytes = contents
 
     job_manager.create_job(job_id)
 
@@ -108,10 +109,17 @@ async def start_dubbing(
         )
     )
 
-    return JSONResponse(content={"job_id": job_id})
+    return JSONResponse(content={
+        "job_id": job_id,
+        "message": "Vídeo recibido correctamente",
+        "filename": file.filename,
+        "size_bytes": len(contents),
+        "target_language": target_lang,
+        "voice_cloning": voice_cloning
+    })
 
 
-@router.get("/dubbing/result/{job_id}")
+@router.get("/result/{job_id}")
 async def get_dubbing_result(job_id: str):
     clean_old_jobs()
     job = job_manager.get_job_status(job_id)
@@ -140,7 +148,7 @@ async def get_dubbing_result(job_id: str):
     )
 
 
-@router.get("/dubbing/download/{job_id}")
+@router.get("/download/{job_id}")
 async def download_dubbed_video(job_id: str):
     job = job_manager.get_job_status(job_id)
     if not job or job["status"] != "completed":
@@ -153,7 +161,7 @@ async def download_dubbed_video(job_id: str):
     )
 
 
-@router.get("/dubbing/metrics/{job_id}")
+@router.get("/metrics/{job_id}")
 async def get_dubbing_metrics(job_id: str):
     job = job_manager.get_job_status(job_id)
     if not job or job["status"] != "completed":
@@ -161,7 +169,7 @@ async def get_dubbing_metrics(job_id: str):
     return job["metrics"]
 
 
-@router.post("/dubbing/reprocess/{job_id}")
+@router.post("/reprocess/{job_id}")
 async def reprocess_dubbing_job(
     job_id: str,
     target_lang: str = Form(...),
@@ -186,7 +194,7 @@ async def reprocess_dubbing_job(
     return JSONResponse(content={"job_id": job_id, "message": "Reprocesando con nuevas opciones"})
 
 
-@router.get("/dubbing/subtitles/{job_id}")
+@router.get("/subtitles/{job_id}")
 async def get_subtitles(job_id: str, format: str = "srt"):
     job = job_manager.get_job_status(job_id)
     if not job or job["status"] != "completed":
