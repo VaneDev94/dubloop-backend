@@ -38,3 +38,5 @@ stripe
 
 # Rate limiting
 slowapi
+
+email_validator==2.2.0
