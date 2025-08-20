@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import bg2 from "../assets/bg1.png";
 import axios from "axios";
-import { API } from "../api"; // o el path correcto si ya tienes un wrapper configurado
+import { API } from "../api/api"; // o el path correcto si ya tienes un wrapper configurado
 
 const TraducirVideo = () => {
   const [lipSync, setLipSync] = useState(null);
