@@ -15,16 +15,6 @@ engine = create_engine(
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
-class Subscription(Base):
-    __tablename__ = "subscriptions"
-
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    plan_id = Column(Integer, ForeignKey("plans.id"), nullable=False)
-    start_date = Column(DateTime, default=datetime.utcnow)
-    end_date = Column(DateTime, nullable=False)
-    active = Column(Boolean, default=True)
-
 # Dependencia para FastAPI
 def get_db():
     db = SessionLocal()

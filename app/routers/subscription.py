@@ -6,10 +6,10 @@ from app.database import get_db
 from app.models import Subscription, User
 from app.auth.dependencies import get_current_user
 
-subscription_router = APIRouter(prefix="/subscriptions", tags=["subscriptions"])
+router = APIRouter(prefix="/subscriptions", tags=["subscriptions"])
 
 
-@subscription_router.post("/subscribe")
+@router.post("/subscribe")
 def subscribe(plan_name: str, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     now = datetime.utcnow()
     active_subscription = (
@@ -38,7 +38,7 @@ def subscribe(plan_name: str, db: Session = Depends(get_db), current_user: User 
     return {"message": "Subscription created successfully", "subscription": new_subscription}
 
 
-@subscription_router.get("/my-subscription")
+@router.get("/my-subscription")
 def get_my_subscription(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     now = datetime.utcnow()
     subscription = (
@@ -58,7 +58,7 @@ def get_my_subscription(db: Session = Depends(get_db), current_user: User = Depe
     return subscription
 
 
-@subscription_router.post("/cancel")
+@router.post("/cancel")
 def cancel_subscription(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     # Note: In Dubloop, plans auto-cancel after one month and cannot be canceled manually.
     raise HTTPException(

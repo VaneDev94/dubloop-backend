@@ -3,7 +3,8 @@ from app.models.user import User
 from app.models.voice import VoiceProfile
 from app.models.metrics import JobMetrics
 from app.models.subtitle import Subtitle
-from app.models.plans import Plan 
+from app.models.plans import Plan, Subscription
+
 
 __all__ = [
     "Job",
@@ -12,4 +13,5 @@ __all__ = [
     "JobMetrics",
     "Subtitle",
     "Plan",
+    "Subscription",
 ]

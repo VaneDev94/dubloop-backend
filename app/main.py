@@ -1,8 +1,9 @@
 from app.database import engine
-from app.models import subscription, user
+from app.models import user
+from app.models.plans import Subscription
 
 user.Base.metadata.create_all(bind=engine)
-subscription.Base.metadata.create_all(bind=engine)
+# subscription.Base.metadata.create_all(bind=engine)
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from slowapi import Limiter, _rate_limit_exceeded_handler
