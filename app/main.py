@@ -65,7 +65,3 @@ import os
 frontend_path = os.path.join(os.path.dirname(__file__), "frontend")
 
 app.mount("/", StaticFiles(directory=frontend_path, html=True), name="frontend")
-
-@app.get("/")
-def serve_root():
-    return FileResponse(os.path.join(frontend_path, "index.html"))
