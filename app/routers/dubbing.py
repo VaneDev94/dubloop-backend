@@ -36,7 +36,7 @@ async def redirect_docs():
 async def dub_video(
     file: UploadFile = File(...),
     custom_voice: Optional[UploadFile] = File(None),
-    target_lang: Optional[str] = Form(None),
+    target_language: Optional[str] = Form(None),
     voice_source: str = Form("auto"),
     enable_lip_sync: bool = Form(False),
     enable_subtitles: bool = Form(False),
@@ -52,19 +52,19 @@ async def dub_video(
     if voice_source == "custom" and not custom_voice:
         raise HTTPException(status_code=400, detail="Se requiere un archivo de voz personalizado si seleccionas 'custom'.")
 
-    if not target_lang:
+    if not target_language:
         from app.services.language_detection import detect_language
         detected_lang = await detect_language(file)
         if not detected_lang:
             raise HTTPException(status_code=400, detail="No se pudo detectar el idioma del vídeo.")
-        target_lang = detected_lang
+        target_language = detected_lang
         file.file.seek(0)
 
     dubbed_video = await process_dubbing(
         file=file,
         custom_voice=custom_voice,
         voice_source=voice_source,
-        target_lang=target_lang,
+        target_language=target_language,
         enable_lip_sync=enable_lip_sync,
         enable_subtitles=enable_subtitles,
         enable_audio_enhancement=enable_audio_enhancement,
@@ -81,20 +81,17 @@ async def dub_video(
 @router.post("/start-dubbing/")
 async def start_dubbing(
     file: UploadFile = File(...),
-    target_language: str = Form(..., alias="target_lang"),
-    voice_cloning: str = Form("false"),
-    enable_lip_sync: str = Form("false"),
-    enable_subtitles: str = Form("false"),
-    enable_audio_enhancement: str = Form("true")
+    target_language: str = Form(...),
+    voice_cloning: bool = Form(False),
+    enable_lip_sync: bool = Form(False),
+    enable_subtitles: bool = Form(False),
+    enable_audio_enhancement: bool = Form(True)
 ):
     validate_upload_file(file)
     contents = await file.read()
     if not contents:
         raise HTTPException(status_code=400, detail="El archivo está vacío.")
     file.file.seek(0)
-
-    def to_bool(value: str) -> bool:
-        return value.lower() in ["true", "1", "yes", "sí"]
 
     job_id = str(uuid.uuid4())
     file_bytes = contents
@@ -106,9 +103,10 @@ async def start_dubbing(
             job_id=job_id,
             file_bytes=file_bytes,
             target_lang=target_language,
-            enable_lip_sync=to_bool(enable_lip_sync),
-            enable_subtitles=to_bool(enable_subtitles),
-            enable_audio_enhancement=to_bool(enable_audio_enhancement)
+            enable_lip_sync=enable_lip_sync,
+            enable_subtitles=enable_subtitles,
+            enable_audio_enhancement=enable_audio_enhancement,
+            voice_cloning=voice_cloning
         )
     )
 
@@ -118,7 +116,10 @@ async def start_dubbing(
         "filename": file.filename,
         "size_bytes": len(contents),
         "target_language": target_language,
-        "voice_cloning": to_bool(voice_cloning)
+        "voice_cloning": voice_cloning,
+        "enable_lip_sync": enable_lip_sync,
+        "enable_subtitles": enable_subtitles,
+        "enable_audio_enhancement": enable_audio_enhancement
     })
 
 
@@ -139,7 +140,7 @@ async def get_dubbing_result(job_id: str):
     if job["status"] == "error":
         return {"status": "error", "error": job["error"]}
 
-    metrics_headers = {f"X-Metric-{k}": str(v) for k, v in job["metrics"].items()}
+    metrics_headers = {f"X-Metric-{k}": str(v) for k, v in job.get("metrics", {}).items()}
 
     return StreamingResponse(
         BytesIO(job["video"]),
@@ -175,7 +176,7 @@ async def get_dubbing_metrics(job_id: str):
 @router.post("/reprocess/{job_id}")
 async def reprocess_dubbing_job(
     job_id: str,
-    target_lang: str = Form(...),
+    target_language: str = Form(...),
     enable_lip_sync: bool = Form(False),
     enable_subtitles: bool = Form(False),
     enable_audio_enhancement: bool = Form(True)
@@ -187,7 +188,7 @@ async def reprocess_dubbing_job(
     asyncio.create_task(
         job_manager.rerun_dubbing_job(
             job_id=job_id,
-            target_lang=target_lang,
+            target_lang=target_language,
             enable_lip_sync=enable_lip_sync,
             enable_subtitles=enable_subtitles,
             enable_audio_enhancement=enable_audio_enhancement

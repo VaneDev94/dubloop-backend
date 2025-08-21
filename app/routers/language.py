@@ -14,4 +14,4 @@ async def detect_language_endpoint(file: UploadFile = File(...)):
     except HTTPException as e:
         raise e
     except Exception as e:
-        raise HTTPException(status_code=500, detail="Error al detectar el idioma")
+        raise HTTPException(status_code=500, detail=f"Error al detectar el idioma: {str(e)}")
